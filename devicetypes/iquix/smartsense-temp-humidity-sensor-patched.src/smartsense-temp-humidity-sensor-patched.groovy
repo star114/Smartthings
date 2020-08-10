@@ -16,7 +16,7 @@
 import physicalgraph.zigbee.zcl.DataType
 
 metadata {
-    definition(name: "SmartSense Temp/Humidity Sensor (Patched)", namespace: "star114", author: "SmartThings/iquix/star114", ocfDeviceType: "oic.d.thermostat", vid: "SmartThings-smartthings-Xiaomi_Temperature_Humidity_Sensor" {
+    definition(name: "SmartSense Temp/Humidity Sensor (Patched)", namespace: "star114", author: "SmartThings/iquix/star114", ocfDeviceType: "oic.d.thermostat", vid: "SmartThings-smartthings-Xiaomi_Temperature_Humidity_Sensor") {
         capability "Configuration"
         capability "Battery"
         capability "Refresh"
