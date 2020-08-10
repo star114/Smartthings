@@ -1,7 +1,7 @@
 /**
- *  SmartSense Temp/Humidity Sensor
+ *  SmartSense Temp/Humidity Sensor (Patched)
  *
- *  Copyright 2014,2020,2020 SmartThings / iquix / Heesik Shin
+ *  Copyright 2014,2020,2020 SmartThings / iquix / star114
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -16,7 +16,7 @@
 import physicalgraph.zigbee.zcl.DataType
 
 metadata {
-    definition(name: "SmartSense Temp/Humidity Sensor (Patched)", namespace: "iquix", author: "SmartThings/iquix", ocfDeviceType: "oic.d.thermostat", vid: "SmartThings-smartthings-Xiaomi_Temperature_Humidity_Sensor" {
+    definition(name: "SmartSense Temp/Humidity Sensor (Patched)", namespace: "star114", author: "SmartThings/iquix/star114", ocfDeviceType: "oic.d.thermostat", vid: "SmartThings-smartthings-Xiaomi_Temperature_Humidity_Sensor" {
         capability "Configuration"
         capability "Battery"
         capability "Refresh"
