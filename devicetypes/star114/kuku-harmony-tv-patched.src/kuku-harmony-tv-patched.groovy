@@ -147,7 +147,7 @@ metadata {
     main(["switch"])
     details(["switch", "volup", "chup",
             "mute", "voldown", "chdown",
-            "menu", "home", "input", "back"
+            "menu", "home", "input", "back",
             "number_1", "number_2", "number_3",
             "number_4", "number_5", "number_6",
             "number_7", "number_8", "number_9",
