@@ -1,5 +1,5 @@
 /**
- *  KuKu Harmony v2 - Virtual Switch for Logitech Harmony (Patched)
+ *  KuKu Harmony (Patched) - Virtual Switch for Logitech Harmony (Patched)
  *
  *  Copyright 2017 KuKu <turlvo@gmail.com> / 2020 star114
  *
@@ -19,7 +19,7 @@
  */
 
 metadata {
-    definition (name: "KuKu Harmony v2_Default", namespace: "star114", author: "KuKu/star114") {
+    definition (name: "KuKu Harmony_Default (Patched)", namespace: "star114", author: "KuKu/star114") {
         capability "Actuator"
         capability "Switch"
         capability "Refresh"
