@@ -1,5 +1,5 @@
 /**
- *  KuKu Harmony v2 - Virtual Switch for Logitech Harmony (Patched)
+ *  KuKu Harmony (Patched) - Virtual Switch for Logitech Harmony (Patched)
  *
  *  Copyright 2017 KuKu <turlvo@gmail.com> / 2020 star114
  *
@@ -41,12 +41,12 @@ def version() { return "v2.0.000" }
 */
 
 definition(
-    name: "KuKu Harmony v2${parent ? " - Device" : ""}",
+    name: "KuKu Harmony (Patched)${parent ? " - Device" : ""}",
     namespace: "star114",
     author: "KuKu/star114",
-    description: "This is a SmartApp that support to control Harmony v2's device and activity!",
+    description: "This is a SmartApp that support to control Harmony (Patched)'s device and activity!",
     category: "Convenience",
-    parent: parent ? "star114.KuKu Harmony v2" : null,
+    parent: parent ? "star114.KuKu Harmony (Patched)" : null,
     singleInstance: true,
     iconUrl: "https://cdn.rawgit.com/turlvo/KuKuHarmony/master/images/icon/KuKu_Harmony_Icon_1x.png",
     iconX2Url: "https://cdn.rawgit.com/turlvo/KuKuHarmony/master/images/icon/KuKu_Harmony_Icon_2x.png",
@@ -97,10 +97,10 @@ def mainPage() {
             }
 
             section("") {
-                app( name: "harmonyDevicesOrActivities", title: "Add a device or activity...", appName: "KuKu Harmony v2", namespace: "star114", multiple: true, uninstall: false)
+                app( name: "harmonyDevicesOrActivities", title: "Add a device or activity...", appName: "KuKu Harmony (Patched)", namespace: "star114", multiple: true, uninstall: false)
             }
 
-            section("KuKu Harmony v2 Version :") {
+            section("KuKu Harmony (Patched) Version :") {
                 paragraph "${version()}"
             }
         }
@@ -462,7 +462,7 @@ def initializeChild(devicetype) {
         def deviceId = device.id
         def existing = getChildDevice(deviceId)
         if (!existing) {
-            def childDevice = addChildDevice("star114", "KuKu Harmony v2_${atomicState.selectedDeviceType}", deviceId, null, ["label": device.label])
+            def childDevice = addChildDevice("star114", "KuKu Harmony_${atomicState.selectedDeviceType} (Patched)", deviceId, null, ["label": device.label])
         } else {
             log.debug "Device already created"
         }
@@ -478,7 +478,7 @@ def initializeChild(devicetype) {
         def activityId = activity.id
         def existing = getChildDevice(activityId)
         if (!existing) {
-            def childDevice = addChildDevice("star114", "KuKu Harmony v2_Activity", activityId, null, ["label": activity.label])
+            def childDevice = addChildDevice("star114", "KuKu Harmony_Activity (Patched)", activityId, null, ["label": activity.label])
         } else {
             log.debug "Device already created"
         }
