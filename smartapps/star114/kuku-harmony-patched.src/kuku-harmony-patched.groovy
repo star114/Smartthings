@@ -931,3 +931,4 @@ def setHubAction(host, url, callback) {
     log.debug "getHubAction>> $host, $url, $callback"
     return new physicalgraph.device.HubAction("POST ${url} HTTP/1.1\r\nHOST: ${host}\r\n\r\n",
             physicalgraph.device.Protocol.LAN, "${host}", [callback: callback])
+}
