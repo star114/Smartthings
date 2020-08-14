@@ -73,20 +73,42 @@ metadata {
     ])
 }
 
+def sendEventAcMode(mode) {
+    log.debug "sendEventAcMode()"
+    if (mode != "cool" && mode != "auto" && mode != "fanOnly" && mode != "dry") {
+        mode = "auto"
+    }
+    sendEvent(name: "supportedAcModes", value:["auto", "cool", "dry", "fanOnly"])
+    sendEvent(name: "airConditionerMode", value: mode, displayed: true)
+}
+
+def sendEventFanMode(mode) {
+    log.debug "sendEventFanMode()"
+    if (mode != "low" && mode != "medium" && mode != "high" && mode != "auto") {
+        mode = "auto"
+    }
+    sendEvent(name: "supportedAcFanModes", value:["auto", "low", "medium", "high"])
+    sendEvent(name: "fanMode", value: "auto", displayed: true)
+}
+
 def installed() {
     log.debug "installed()"
     //configure()
-    state.switch="off"
     sendEvent(name: "switch", value: "off", displayed: true)
     sendEvent(name: "coolingSetpoint", value: 24, unit: "C")
-    sendEvent(name: "supportedAcModes", value:["auto", "cool","dry","fanOnly"])
-    sendEvent(name: "supportedAcFanModes", value:["auto", "low", "medium", "high", "turbo"])
-    sendEvent(name: "airConditionerMode", value: "auto", displayed: false)
+    sendEventAcMode("auto")
+    sendEventFanMode("auto")
 }
 
 // parse events into attributes
 def parse(String description) {
     log.debug "Parsing '${description}'"
+}
+
+def getCurrentState() {
+    log.debug "getCurrentState>> ${device.currentState("switch")?.value}"
+    def currentState = device.currentState("switch")?.value
+    return currentState
 }
 
 def mode() {
@@ -118,9 +140,7 @@ def tempdown() {
 def on() {
     log.debug "child on()"
 
-    log.debug "on>> ${device.currentState("switch")?.value}"
-    def currentState = device.currentState("switch")?.value
-
+    def currentState = getCurrentState()
     if (currentState == "on") {
         log.debug "Already turned on, skip ON command"
     } else {
@@ -132,9 +152,7 @@ def on() {
 def off() {
     log.debug "child off()"
 
-    log.debug "off>> ${device.currentState("switch")?.value}"
-    def currentState = device.currentState("switch")?.value
-
+    def currentState = getCurrentState()
     if (currentState == "on") {
         parent.command(this, "power-off")
         sendEvent(name: "switch", value: "off")
@@ -154,40 +172,34 @@ def virtualOff() {
     sendEvent(name: "switch", value: "off")
 }
 
-// handle commands
 def setFanMode(mode) {
     log.debug "Executing 'setFanMode'"
-    if (state.switch=="off") {
+    def currentState = getCurrentState()
+    if (currentState == "off") {
         log.debug "air conditioner is off"
-        sendEvent(name: "fanMode", value: "auto", displayed: true)
+        sendEventFanMode("auto")
         return
     }
 
-    if (mode!="low" && mode!="medium" && mode!="high" && mode!="auto") {
-        sendEvent(name: "fanMode", value: "auto", displayed: true)
-        return
-    }
-    sendEvent(name: "fanMode", value: mode, displayed: true)
+    sendEventFanMode(mode)
 }
 
 def setAirConditionerMode(mode) {
     log.debug "Executing 'setAirConditionerMode'"
-    if (state.switch=="off") {
+    def currentState = getCurrentState()
+    if (currentState == "off") {
         log.debug "air conditioner is off"
-        sendEvent(name: "airConditionerMode", value: "auto", displayed: true)
+        sendEventAcMode("auto")
         return
     }
 
-    if (mode!="cool" && mode!="auto" && mode!="fanOnly" && mode!="dry") {
-        sendEvent(name: "airConditionerMode", value: "auto", displayed: true)
-        return
-    }
-    sendEvent(name: "airConditionerMode", value: mode, displayed: true)
+    sendEventAcMode(mode)
 }
 
 def setCoolingSetpoint(temperature) {
     log.debug "Executing 'setCoolingSetpoint'"
-    if (state.switch=="off") {
+    def currentState = getCurrentState()
+    if (currentState == "off") {
         log.debug "air conditioner is off"
         sendEvent(name: "coolingSetpoint", value: 24 as int, unit: "C", displayed: true)
         return
@@ -209,8 +221,7 @@ def parseEventData(Map results) {
 def generateEvent(Map results) {
     results.each { name, value ->
         log.debug "generateEvent>> name: $name, value: $value"
-        def currentState = device.currentValue("switch")
-        log.debug "generateEvent>> currentState: $currentState"
+        def currentState = getCurrentState()
         if (currentState != value) {
             log.debug "generateEvent>> changed to $value"
             sendEvent(name: "switch", value: value)
