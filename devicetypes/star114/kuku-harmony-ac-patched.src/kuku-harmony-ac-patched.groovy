@@ -78,7 +78,7 @@ def installed() {
     //configure()
     state.switch="off"
     sendEvent(name: "switch", value: "off", displayed: true)
-    sendEvent(name: "coolingSetpoint", value: 27, unit: "C")
+    sendEvent(name: "coolingSetpoint", value: 24, unit: "C")
     sendEvent(name: "supportedAcModes", value:["auto", "cool","dry","fanOnly"])
     sendEvent(name: "supportedAcFanModes", value:["auto", "low", "medium", "high", "turbo"])
     sendEvent(name: "airConditionerMode", value: "auto", displayed: false)
@@ -159,6 +159,7 @@ def setFanMode(mode) {
     log.debug "Executing 'setFanMode'"
     if (state.switch=="off") {
         log.debug "air conditioner is off"
+        sendEvent(name: "fanMode", value: "auto", displayed: true)
         return
     }
 
@@ -173,12 +174,13 @@ def setAirConditionerMode(mode) {
     log.debug "Executing 'setAirConditionerMode'"
     if (state.switch=="off") {
         log.debug "air conditioner is off"
+        sendEvent(name: "airConditionerMode", value: "auto", displayed: true)
         return
     }
 
     if (mode!="cool" && mode!="auto" && mode!="fanOnly" && mode!="dry") {
         sendEvent(name: "airConditionerMode", value: "auto", displayed: true)
-            return
+        return
     }
     sendEvent(name: "airConditionerMode", value: mode, displayed: true)
 }
@@ -187,6 +189,7 @@ def setCoolingSetpoint(temperature) {
     log.debug "Executing 'setCoolingSetpoint'"
     if (state.switch=="off") {
         log.debug "air conditioner is off"
+        sendEvent(name: "coolingSetpoint", value: 24 as int, unit: "C", displayed: true)
         return
     }
 
