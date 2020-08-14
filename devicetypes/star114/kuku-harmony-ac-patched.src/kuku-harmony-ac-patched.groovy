@@ -78,8 +78,8 @@ def sendEventAcMode(mode) {
     if (mode != "cool" && mode != "auto" && mode != "fanOnly" && mode != "dry") {
         mode = "auto"
     }
-    sendEvent(name: "supportedAcModes", value:["auto", "cool", "dry", "fanOnly"])
     sendEvent(name: "airConditionerMode", value: mode, displayed: true)
+    sendEvent(name: "supportedAcModes", value:["auto", "cool", "dry", "fanOnly"])
 }
 
 def sendEventFanMode(mode) {
@@ -87,8 +87,8 @@ def sendEventFanMode(mode) {
     if (mode != "low" && mode != "medium" && mode != "high" && mode != "auto") {
         mode = "auto"
     }
-    sendEvent(name: "supportedAcFanModes", value:["auto", "low", "medium", "high"])
     sendEvent(name: "fanMode", value: "auto", displayed: true)
+    sendEvent(name: "supportedAcFanModes", value:["auto", "low", "medium", "high"])
 }
 
 def installed() {
