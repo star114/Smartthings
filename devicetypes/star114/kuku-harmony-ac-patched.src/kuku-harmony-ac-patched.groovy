@@ -22,6 +22,9 @@ metadata {
     definition (name: "KuKu Harmony_AC (Patched)", namespace: "star114", author: "KuKu/star114") {
         capability "Actuator"
         capability "Switch"
+        capability "Air Conditioner Fan Mode"
+        capability "Air Conditioner Mode"
+        capability "Thermostat Cooling Setpoint"
         capability "Refresh"
         capability "Sensor"
         capability "Configuration"
@@ -74,6 +77,12 @@ metadata {
 def installed() {
     log.debug "installed()"
     //configure()
+    state.switch="off"
+    sendEvent(name: "switch", value: "off", displayed: true)
+    sendEvent(name: "coolingSetpoint", value: 27, unit: "C")
+    sendEvent(name: "supportedAcModes", value:["auto", "cool","dry","fanOnly"])
+    sendEvent(name: "supportedAcFanModes", value:["auto", "low", "medium", "high", "turbo"])
+    sendEvent(name: "airConditionerMode", value: "auto", displayed: false)
 }
 
 // parse events into attributes
@@ -144,6 +153,19 @@ def virtualOn() {
 def virtualOff() {
     log.debug "child off()"
     sendEvent(name: "switch", value: "off")
+}
+
+// handle commands
+def setFanMode() {
+    log.debug "Executing 'setFanMode'"
+}
+
+def setAirConditionerMode() {
+    log.debug "Executing 'setAirConditionerMode'"
+}
+
+def setCoolingSetpoint() {
+    log.debug "Executing 'setCoolingSetpoint'"
 }
 
 def poll() {
