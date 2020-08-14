@@ -69,7 +69,6 @@ metadata {
     details([
         "switch",
         "tempdown", "tempup",
-        "tempSliderControl", "tempSliderControlValue",
         "mode", "jetcool", "speed"
     ])
 }
@@ -156,7 +155,7 @@ def virtualOff() {
 }
 
 // handle commands
-def setFanMode() {
+def setFanMode(mode) {
     log.debug "Executing 'setFanMode'"
     if (state.switch=="off") {
         log.debug "air conditioner is off"
@@ -170,7 +169,7 @@ def setFanMode() {
     sendEvent(name: "fanMode", value: mode, displayed: true)
 }
 
-def setAirConditionerMode() {
+def setAirConditionerMode(mode) {
     log.debug "Executing 'setAirConditionerMode'"
     if (state.switch=="off") {
         log.debug "air conditioner is off"
@@ -184,7 +183,7 @@ def setAirConditionerMode() {
     sendEvent(name: "airConditionerMode", value: mode, displayed: true)
 }
 
-def setCoolingSetpoint() {
+def setCoolingSetpoint(temperature) {
     log.debug "Executing 'setCoolingSetpoint'"
     if (state.switch=="off") {
         log.debug "air conditioner is off"
