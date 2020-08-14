@@ -158,14 +158,40 @@ def virtualOff() {
 // handle commands
 def setFanMode() {
     log.debug "Executing 'setFanMode'"
+    if (state.switch=="off") {
+        log.debug "air conditioner is off"
+        return
+    }
+
+    if (mode!="low" && mode!="medium" && mode!="high" && mode!="auto") {
+        sendEvent(name: "fanMode", value: "auto", displayed: true)
+        return
+    }
+    sendEvent(name: "fanMode", value: mode, displayed: true)
 }
 
 def setAirConditionerMode() {
     log.debug "Executing 'setAirConditionerMode'"
+    if (state.switch=="off") {
+        log.debug "air conditioner is off"
+        return
+    }
+
+    if (mode!="cool" && mode!="auto" && mode!="fanOnly" && mode!="dry") {
+        sendEvent(name: "airConditionerMode", value: "auto", displayed: true)
+            return
+    }
+    sendEvent(name: "airConditionerMode", value: mode, displayed: true)
 }
 
 def setCoolingSetpoint() {
     log.debug "Executing 'setCoolingSetpoint'"
+    if (state.switch=="off") {
+        log.debug "air conditioner is off"
+        return
+    }
+
+    sendEvent(name: "coolingSetpoint", value: temperature as int, unit: "C", displayed: true)
 }
 
 def poll() {
