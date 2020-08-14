@@ -74,7 +74,7 @@ metadata {
 }
 
 def sendEventAcMode(mode) {
-    log.debug "sendEventAcMode()"
+    log.debug "sendEventAcMode() ${mode}"
     if (mode != "cool" && mode != "auto" && mode != "fanOnly" && mode != "dry") {
         mode = "auto"
     }
@@ -83,12 +83,12 @@ def sendEventAcMode(mode) {
 }
 
 def sendEventFanMode(mode) {
-    log.debug "sendEventFanMode()"
+    log.debug "sendEventFanMode() ${mode}"
     if (mode != "low" && mode != "medium" && mode != "high" && mode != "auto") {
         mode = "auto"
     }
-    sendEvent(name: "fanMode", value: "auto", displayed: true)
-    sendEvent(name: "supportedAcFanModes", value:["auto", "low", "medium", "high"])
+    sendEvent(name: "fanMode", value: mode, displayed: true)
+    // sendEvent(name: "supportedAcFanModes", value:["auto", "low", "medium", "high"])
 }
 
 def installed() {
