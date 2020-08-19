@@ -19,12 +19,12 @@
  */
 
 metadata {
-    definition (name: "KuKu Harmony_AC (Patched)", namespace: "star114", author: "KuKu/star114") {
+    definition (name: "KuKu Harmony_AC (Patched)", namespace: "star114", author: "KuKu/star114", ocfDeviceType: "oic.d.airconditioner") {
         capability "Actuator"
         capability "Switch"
-        capability "Air Conditioner Fan Mode"
-        capability "Air Conditioner Mode"
+        capability "Thermostat Mode"
         capability "Thermostat Cooling Setpoint"
+        capability "Fan Speed"
         capability "Refresh"
         capability "Sensor"
         capability "Configuration"
@@ -32,14 +32,16 @@ metadata {
 
         command "mode"
         command "jetcool"
-        command "speed"
+        command "speedChange"
         command "tempup"
         command "tempdown"
 
-        command "virtualOn"
-        command "virtualOff"
+        attribute "prevTemperature", "number"
+        attribute "coolFanSpeed", "number"
+        attribute "dehumidifierFanSpeed", "number"
     }
 
+    // for classic app
     tiles(scale: 2) {
         standardTile ("actionFlat", "device.switch", width: 2, height: 2, decoration: "flat") {
             state "off", label: '${currentValue}', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff", nextState:"turningOn"
@@ -54,8 +56,8 @@ metadata {
         standardTile ("jetcool", "device.jetcool", width: 2, height: 2, decoration: "flat", canChangeIcon: false, canChangeBackground: false) {
             state "jetcool", label: "JET MODE", action: "jetcool", defaultState: true
         }
-        standardTile ("speed", "device.speed", width: 2, height: 2, decoration: "flat", canChangeIcon: false, canChangeBackground: false) {
-            state "speed", label: "FAN SPEED", action: "speed", defaultState: true
+        standardTile ("speedChange", "device.speedChange", width: 2, height: 2, decoration: "flat", canChangeIcon: false, canChangeBackground: false) {
+            state "speedChange", label: "FAN SPEED", action: "speedChange", defaultState: true
         }
         standardTile("tempup", "device.temperature", width: 2, height: 2, inactiveLabel: false, decoration: "flat") {
             state "tempup", label:'up', action:"tempup", defaultState: true
@@ -64,40 +66,20 @@ metadata {
             state "tempdown", label:'down', action:"tempdown", defaultState: true
         }
     }
-
-    main("switch")
-    details([
-        "switch",
-        "tempdown", "tempup",
-        "mode", "jetcool", "speed"
-    ])
-}
-
-def sendEventAcMode(mode) {
-    log.debug "sendEventAcMode() ${mode}"
-    if (mode != "cool" && mode != "auto" && mode != "fanOnly" && mode != "dry") {
-        mode = "auto"
-    }
-    sendEvent(name: "airConditionerMode", value: mode, displayed: true)
-    sendEvent(name: "supportedAcModes", value:["auto", "cool", "dry", "fanOnly"])
-}
-
-def sendEventFanMode(mode) {
-    log.debug "sendEventFanMode() ${mode}"
-    if (mode != "low" && mode != "medium" && mode != "high" && mode != "auto") {
-        mode = "auto"
-    }
-    sendEvent(name: "fanMode", value: mode, displayed: true)
-    // sendEvent(name: "supportedAcFanModes", value:["auto", "low", "medium", "high"])
 }
 
 def installed() {
     log.debug "installed()"
     //configure()
+    // set to default
     sendEvent(name: "switch", value: "off", displayed: true)
-    sendEvent(name: "coolingSetpoint", value: 24, unit: "C")
-    sendEventAcMode("auto")
-    sendEventFanMode("auto")
+    sendEvent(name: "supportedThermostatModes", value:["rush hour", "heat", "cool", "off"])
+    sendEvent(name: "ThermostatMode", value: "off")
+    sendEvent(name: "coolingSetpoint", value: 24 as int, unit: "C")
+    sendEvent(name: "prevTemperature", value: 24 as int)
+    sendEvent(name: "fanSpeed", value: 0 as int)
+    sendEvent(name: "coolFanSpeed", value: 2 as int)
+    sendEvent(name: "dehumidifierFanSpeed", value: 3 as int)
 }
 
 // parse events into attributes
@@ -105,10 +87,32 @@ def parse(String description) {
     log.debug "Parsing '${description}'"
 }
 
-def getCurrentState() {
-    log.debug "getCurrentState>> ${device.currentState("switch")?.value}"
-    def currentState = device.currentState("switch")?.value
-    return currentState
+def getCurrentState(deviceName) {
+    return device.currentState(deviceName)
+}
+
+def getThermostatMode() {
+    def mode = getCurrentState("thermostatMode")?.value
+    log.debug "getThermostatMode>> $mode"
+    return mode
+}
+
+def getSwitchState() {
+    def switchState = getCurrentState("switch")?.value
+    log.debug "getSwitchState>> $switchState"
+    return switchState
+}
+
+def getNumericAttribute(name) {
+    def value = getCurrentState(name)?.numericValue
+    log.debug "getNumericAttribute($name)>> $value"
+    return value
+}
+
+def getFanSpeed() {
+    def speed = getCurrentState("fanSpeed")?.value
+    log.debug "getFanSpeed>> $speed"
+    return speed
 }
 
 def mode() {
@@ -121,8 +125,8 @@ def jetcool() {
     parent.command(this, "jetcool")
 }
 
-def speed() {
-    log.debug "child speed()"
+def speedChange() {
+    log.debug "child speedChange()"
     parent.command(this, "speed")
 
 }
@@ -137,75 +141,209 @@ def tempdown() {
     parent.command(this, "tempdown")
 }
 
+def coolpower() {
+    log.debug "coolpower()"
+    def currentThermostatMode = getThermostatMode()
+    if (currentThermostatMode == "rush hour") {
+        return
+    } else if (currentThermostatMode == "off") {
+        on()
+    } else if (currentThermostatMode == "heat") {
+        // dehumidifier -> cool
+        mode()
+    }
+
+    sendEvent(name: "thermostatMode", value: "rush hour")
+    sendEvent(name: "coolingSetpoint", value: 18 as int, unit: "C", displayed: true)
+    sendEvent(name: "prevTemperature", value: 18 as int)
+    sendEvent(name: "fanSpeed", value: 4 as int)
+    sendEvent(name: "coolFanSpeed", value: 3 as int)
+    jetcool()
+}
+
+def dehumidifier() {
+    log.debug "dehumidifier()"
+    def currentThermostatMode = getThermostatMode()
+    if (currentThermostatMode == "heat") {
+        return
+    } else if (currentThermostatMode == "off") {
+        on()
+    } else if (currentThermostatMode == "rush hour") {
+        // cool power -> cool
+        mode()
+    }
+
+    sendEvent(name: "thermostatMode", value: "heat")
+    sendEvent(name: "coolingSetpoint", value: 24 as int, unit: "C", displayed: true)
+    sendEvent(name: "prevTemperature", value: 24 as int)
+    def currentFanSpeed = getFanSpeed()
+    sendEvent(name: "coolFanSpeed", value: currentFanSpeed as int)
+    def currentDehumidifierFanSpeed = getNumericAttribute("dehumidifierFanSpeed")
+    sendEvent(name: "fanSpeed", value: currentDehumidifierFanSpeed as int)
+    mode()
+}
+
+def cool() {
+    log.debug "cool()"
+    def currentThermostatMode = getThermostatMode()
+    if (currentThermostatMode == "cool") {
+        return
+    } else if (currentThermostatMode == "off") {
+        on()
+    } else {
+        // dehumidifier / cool power
+        sendEvent(name: "thermostatMode", value: "cool")
+        sendEvent(name: "coolingSetpoint", value: 18 as int, unit: "C", displayed: true)
+        sendEvent(name: "prevTemperature", value: 18 as int)
+        def currentCoolFanSpeed = getNumericAttribute("coolFanSpeed")
+        sendEvent(name: "fanSpeed", value: currentCoolFanSpeed as int)
+        mode()
+    }
+}
+
 def on() {
     log.debug "child on()"
 
-    def currentState = getCurrentState()
+    def currentState = getSwitchState()
     if (currentState == "on") {
         log.debug "Already turned on, skip ON command"
-    } else {
-        parent.command(this, "power-on")
-        sendEvent(name: "switch", value: "on")
+        return
     }
+
+    parent.command(this, "power-on")
+    sendEvent(name: "switch", value: "on")
+    sendEvent(name: "thermostatMode", value: "cool")
+    // set to default
+    sendEvent(name: "coolingSetpoint", value: 24 as int, unit: "C", displayed: true)
+    sendEvent(name: "prevTemperature", value: 24 as int)
+    sendEvent(name: "fanSpeed", value: 2 as int)
+    sendEvent(name: "coolFanSpeed", value: 2 as int)
 }
 
 def off() {
     log.debug "child off()"
 
-    def currentState = getCurrentState()
-    if (currentState == "on") {
-        parent.command(this, "power-off")
-        sendEvent(name: "switch", value: "off")
-
-    } else {
+    def currentState = getSwitchState()
+    if (currentState == "off") {
         log.debug "Already turned off, skip OFF command"
+        return
     }
-}
 
-def virtualOn() {
-    log.debug "child on()"
-    sendEvent(name: "switch", value: "on")
-}
-
-def virtualOff() {
-    log.debug "child off()"
+    parent.command(this, "power-off")
     sendEvent(name: "switch", value: "off")
-}
-
-def setFanMode(mode) {
-    log.debug "Executing 'setFanMode'"
-    def currentState = getCurrentState()
-    if (currentState == "off") {
-        log.debug "air conditioner is off"
-        sendEventFanMode("auto")
-        return
-    }
-
-    sendEventFanMode(mode)
-}
-
-def setAirConditionerMode(mode) {
-    log.debug "Executing 'setAirConditionerMode'"
-    def currentState = getCurrentState()
-    if (currentState == "off") {
-        log.debug "air conditioner is off"
-        sendEventAcMode("auto")
-        return
-    }
-
-    sendEventAcMode(mode)
+    sendEvent(name: "thermostatMode", value: "off")
+    // set to default
+    sendEvent(name: "coolingSetpoint", value: 24 as int, unit: "C", displayed: true)
+    sendEvent(name: "prevTemperature", value: 24 as int)
+    sendEvent(name: "fanSpeed", value: 0 as int)
+    sendEvent(name: "coolFanSpeed", value: 2 as int)
 }
 
 def setCoolingSetpoint(temperature) {
-    log.debug "Executing 'setCoolingSetpoint'"
-    def currentState = getCurrentState()
+    log.debug "setCoolingSetpoint($temperature)"
+    def currentState = getSwitchState()
     if (currentState == "off") {
         log.debug "air conditioner is off"
         sendEvent(name: "coolingSetpoint", value: 24 as int, unit: "C", displayed: true)
+        sendEvent(name: "prevTemperature", value: 24 as int)
+        return
+    }
+    def prevTemperature = getNumericAttribute("prevTemperature")
+    log.debug "prev temperature: $prevTemperature"
+    def diff = prevTemperature - temperature
+    log.debug "diff: $diff"
+    if (diff > 0) {
+        for (def i = 0; i < diff; i++) {
+            tempdown()
+        }
+    } else if (diff < 0) {
+        for (def i = 0; i > diff; i--) {
+            tempup()
+        }
+    }
+    sendEvent(name: "prevTemperature", value: temperature as int)
+    sendEvent(name: "coolingSetpoint", value: temperature as int, unit: "C", displayed: true)
+}
+
+def setThermostatMode(mode){
+    log.debug "setThermostatMode($mode)"
+
+    switch(mode){
+        case "rush hour":
+            coolpower()
+            break
+        case "heat":
+            dehumidifier()
+            break
+        case "cool":
+            cool()
+            break
+        case "off":
+            off()
+            break
+    }
+}
+
+def setFanSpeed(speed) {
+    log.debug "setFanSpeed($speed)"
+    def currentState = getSwitchState()
+    if (currentState == "off") {
+        log.debug "air conditioner is off"
+        sendEvent(name: "fanSpeed", value: 0 as int)
+        sendEvent(name: "coolFanSpeed", value: 2 as int)
         return
     }
 
-    sendEvent(name: "coolingSetpoint", value: temperature as int, unit: "C", displayed: true)
+    /*
+     * 0 : off
+     * 1 : low
+     * 2 : medium
+     * 3 : high
+     * 4 : max
+     */
+    if (speed == 0) {
+        log.debug "trying to be off"
+        off()
+        return
+    } else if (speed == 4) {
+        log.debug "trying to be max"
+        coolpower()
+        return
+    }
+
+    def currentThermostatMode = getThermostatMode()
+    if (currentThermostatMode == "heat") {
+        def prev = getNumericAttribute("dehumidifierFanSpeed")
+        def diff = speed - prev
+        log.debug "fan speed diff>> $diff"
+        if (diff < 0) {
+            diff = 3 + diff
+        }
+        for (def i = 0; i < diff; i++) {
+            speedChange()
+        }
+        sendEvent(name: "dehumidifierFanSpeed", value: speed as int)
+        sendEvent(name: "fanSpeed", value: speed as int, displayed: true)
+    } else if (currentThermostatMode == "cool") {
+        def prev = getNumericAttribute("coolFanSpeed")
+        def diff = speed - prev
+        log.debug "fan speed diff>> $diff"
+        if (diff < 0) {
+            diff = 3 + diff
+        }
+        for (def i = 0; i < diff; i++) {
+            speedChange()
+        }
+        sendEvent(name: "coolFanSpeed", value: speed as int)
+        sendEvent(name: "fanSpeed", value: speed as int, displayed: true)
+    } else if (currentThermostatMode == "rush hour") {
+        log.debug "cannot modify fan speed in cool power mode"
+        sendEvent(name: "fanSpeed", value: 4 as int, displayed: true)
+    } else {
+        // off
+        log.debug "must not reach here."
+        sendEvent(name: "fanSpeed", value: 0 as int, displayed: true)
+    }
 }
 
 def poll() {
@@ -221,7 +359,7 @@ def parseEventData(Map results) {
 def generateEvent(Map results) {
     results.each { name, value ->
         log.debug "generateEvent>> name: $name, value: $value"
-        def currentState = getCurrentState()
+        def currentState = getSwitchState()
         if (currentState != value) {
             log.debug "generateEvent>> changed to $value"
             sendEvent(name: "switch", value: value)
