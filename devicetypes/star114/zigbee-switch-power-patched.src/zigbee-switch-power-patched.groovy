@@ -17,49 +17,15 @@ metadata {
         capability "Actuator"
         capability "Configuration"
         capability "Refresh"
+        capability "Energy Meter"
         capability "Power Meter"
         capability "Sensor"
         capability "Switch"
         capability "Health Check"
         capability "Light"
 
-        // Generic
-        fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0B04", deviceJoinName: "Switch"
-        fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0702", deviceJoinName: "Switch"
-
-        // Aurora
-        fingerprint profileId: "0104", inClusters: "0000, 0702, 0003, 0009, 0B04, 0006, 0004, 0005, 0002", outClusters: "0000, 0019, 000A, 0003, 0406", manufacturer: "Develco Products A/S", model: "Smart16ARelay51AU", deviceJoinName: "Aurora Switch" //Aurora Smart Inline Relay
-        fingerprint profileId: "0104", inClusters: "0000, 0702, 0003, 0009, 0B04, 0006, 0004, 0005, 0002", outClusters: "0000, 0019, 000A, 0003, 0406", manufacturer: "Aurora", model: "Smart16ARelay51AU", deviceJoinName: "Aurora Switch" //Aurora Smart Inline Relay
-
-        // EZEX
-        fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0006, 0B04, 0702", outClusters: "0019", model: "E210-KR210Z1-HA", deviceJoinName: "eZEX Switch" //EZEX Plug
-
-        // GE/Jasco
-        fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0702, 0B05", outClusters: "0003, 000A, 0019", manufacturer: "Jasco Products", model: "45853", deviceJoinName: "GE Outlet", ocfDeviceType: "oic.d.smartplug" //GE ZigBee Plug-In Switch
-        fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0702, 0B05", outClusters: "000A, 0019", manufacturer: "Jasco Products", model: "45856", deviceJoinName: "GE Switch" //GE ZigBee In-Wall Switch
-
-        // INGENIUM
-        fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0B04", outClusters: "0000, 0004", manufacturer: "MEGAMAN", model: "SH-PSUKC44B-E", deviceJoinName: "INGENIUM Outlet", ocfDeviceType: "oic.d.smartplug" //INGENIUM ZB Smart Power Adaptor
-
-        // Ozom
-        fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0702", outClusters: "0000", manufacturer: "ClimaxTechnology", model: "PSM_00.00.00.35TC", deviceJoinName: "Ozom Outlet", ocfDeviceType: "oic.d.smartplug" //Ozom Smart Plug
-
-        // Philio
-        fingerprint manufacturer: " ", model: "PAN18-v1.0.7", deviceJoinName: "Philio Outlet", ocfDeviceType: "oic.d.smartplug" //profileId: "0104", inClusters: "0000, 0003, 0006, 0702", outClusters: "0003, 0019", //Philio Smart Plug
-
-        // Salus
-        fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0702", manufacturer: "SALUS", model: "SX885ZB", deviceJoinName: "Salus Switch" //Salus miniSmartplug
-
-        //AduroSmart
-        fingerprint profileId: "0104", deviceId: "0051", inClusters: "0000, 0003, 0004, 0005, 0006, 0B04, 1000, 0702", outClusters: "0019", manufacturer: "AduroSmart Eria", model: "AD-SmartPlug3001", deviceJoinName: "Eria Switch" //Eria Zigbee Smart Plug
-        fingerprint profileId: "0104", deviceId: "010A", inClusters: "0000, 0003, 0004, 0005, 0006, 1000", outClusters: "0019", manufacturer: "AduroSmart Eria", model: "BPU3", deviceJoinName: "Eria Switch" //Eria Zigbee On/Off Plug
-        fingerprint profileId: "0104", deviceId: "0101", inClusters: "0000, 0003, 0004, 0005, 0006, 0008, 1000", outClusters: "0019", manufacturer: "AduroSmart Eria", model: "BDP3001", deviceJoinName: "Eria Switch" //Eria Zigbee Dimmable Plug
-
         // DAWON
-        fingerprint profileId: "0104", deviceId: "0051", inClusters: "0000 0004 0003 0006 0019 0702 0B04", outClusters: "0000 0004 0003 0006 0019 0702 0B04", manufacturer: "DAWON_DNS", model: "PM-B430-ZB", deviceJoinName: "Dawon Outlet", ocfDeviceType: "oic.d.smartplug" // DAWON DNS Smart Plug PM-B430-ZB (10A)
-        fingerprint profileId: "0104", deviceId: "0051", inClusters: "0000 0002 0003 0004 0006 0019 0702 0B04 0008 0009", outClusters: "0000 0002 0003 0004 0006 0019 0702 0B04 0008 0009", manufacturer: "DAWON_DNS", model: "PM-B530-ZB", deviceJoinName: "Dawon Outlet", ocfDeviceType: "oic.d.smartplug" // DAWON DNS Smart Plug PM-B530-ZB (16A)
-        fingerprint profileId: "0104", deviceId: "0051", inClusters: "0000 0002 0003 0004 0006 0019 0702 0B04 0008 0009", outClusters: "0000 0002 0003 0004 0006 0019 0702 0B04 0008 0009", manufacturer: "DAWON_DNS", model: "PM-C140-ZB", deviceJoinName: "Dawon Outlet", ocfDeviceType: "oic.d.smartplug" // DAWON DNS In-Wall Outlet PM-C140-ZB
-        fingerprint profileId: "0104", deviceId: "0051", inClusters: "0000 0002 0003 0006 0702 0B04", outClusters: "0003 0019", manufacturer: "DAWON_DNS", model: "PM-B540-ZB", deviceJoinName: "Dawon Outlet", ocfDeviceType: "oic.d.smartplug" // DAWON DNS Smart Plug PM-B540-ZB (16A)
+        fingerprint endpointId: "0x01", profileId: "0104", deviceId: "0051", inClusters: "0000, 0002, 0003, 0004, 0006, 0019, 0702, 0B04, 0008, 0009", outClusters: "0000, 0002, 0003, 0004, 0006, 0019, 0702, 0B04, 0008, 0009", manufacturer: "DAWON_DNS", model: "PM-B530-ZB", deviceJoinName: "DAWON SmartPlug 16A"
     }
 
     tiles(scale: 2) {
@@ -72,6 +38,9 @@ metadata {
             }
             tileAttribute ("power", key: "SECONDARY_CONTROL") {
                 attributeState "power", label:'${currentValue} W'
+            }
+            tileAttribute ("energy", key: "SECONDARY_CONTROL") {
+                attributeState "energy", label:'${currentValue} kWh'
             }
         }
         standardTile("refresh", "device.refresh", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
@@ -92,7 +61,11 @@ def parse(String description) {
             def div = device.getDataValue("divisor")
             div = div ? (div as int) : 10
             powerValue = (event.value as Integer)/div
-            sendEvent(name: "power", value: powerValue)
+            sendEvent(name: "power", value: powerValue, unit: "W", displayed = true)
+        } else if (event.name== "energy") {
+            def div = 1000
+            def energyValue = (event.value as Integer)/div
+            sendEvent(name: "energy", value: energyValue, unit: "kWh", displayed = true)
         }
         else {
             sendEvent(event)
@@ -110,6 +83,12 @@ def off() {
 
 def on() {
     zigbee.on()
+}
+
+def installed() {
+    log.debug "installed()"
+    configure()
+    refresh()
 }
 
 def refresh() {
