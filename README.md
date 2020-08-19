@@ -21,6 +21,13 @@ For [Hejhome smart temperature-humidity sensor](https://www.hej.life/shop/?idx=2
 * Special thanks to iquix. (forked from [iquix's repo](https://github.com/iquix/Smartthings/blob/master/devicetypes/iquix/smartsense-temp-humidity-sensor-patched.src/smartsense-temp-humidity-sensor-patched.groovy))
 * Compatible with remaining battery capacity.
 
+### zigbee-switch-power-patched
+
+For [Dawon DNS ZB smart plug 16A (end device)](https://pmshop.co.kr/product/detail.html?product_no=111&cate_no=33&display_group=1)
+* Can connect to Smartthings hub directly. (Cloud execution) - Official zigbee-switch-power DTH will support Dawon DNS ZB smart plug (local execution) soon.
+* Forked from [SmartThingsPublic repo](https://github.com/star114/SmartThingsPublic/blob/master/devicetypes/smartthings/zigbee-switch-power.src/zigbee-switch-power.groovy)
+* Compatible with Dawon smart plugs footprints
+
 ### integrated-zigbee-switch-patched
 
 For [Hejhome GoQual 3-Way ZigBee Switch](https://www.hej.life/shop/?idx=17)
