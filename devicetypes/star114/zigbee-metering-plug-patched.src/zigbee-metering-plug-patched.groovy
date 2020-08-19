@@ -38,23 +38,23 @@ metadata {
     }
 
     tiles(scale: 2){
-        multiAttributeTile(name:"switch", type: "generic", width: 6, height: 4, canChangeIcon: true){
-                tileAttribute("device.switch", key: "PRIMARY_CONTROL") {
-                        attributeState("on", label: '${name}', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#00a0dc")
-                        attributeState("off", label: '${name}', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff")
-                }
+        multiAttributeTile(name:"switch", type: "generic", width: 6, height: 4, canChangeIcon: true) {
+            tileAttribute("device.switch", key: "PRIMARY_CONTROL") {
+                    attributeState("on", label: '${name}', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#00a0dc")
+                    attributeState("off", label: '${name}', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff")
+            }
         }
         valueTile("power", "device.power", decoration: "flat", width: 2, height: 2) {
-                state "default", label:'${currentValue} W'
+            state "default", label:'${currentValue} W'
         }
         valueTile("energy", "device.energy", decoration: "flat", width: 2, height: 2) {
-                state "default", label:'${currentValue} kWh'
+            state "default", label:'${currentValue} kWh'
         }
         standardTile("refresh", "device.power", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
-                state "default", label:'', action:"refresh.refresh", icon:"st.secondary.refresh"
+            state "default", label:'', action:"refresh.refresh", icon:"st.secondary.refresh"
         }
         standardTile("reset", "device.energy", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
-                state "default", label:'reset kWh', action:"reset"
+            state "default", label:'reset kWh', action:"reset"
         }
 
         main(["switch"])
@@ -66,7 +66,7 @@ def getATTRIBUTE_READING_INFO_SET() { 0x0000 }
 def getATTRIBUTE_HISTORICAL_CONSUMPTION() { 0x0400 }
 
 def parse(String description) {
-    log.debug "description is $description"
+    // log.debug "description is $description"
     def event = zigbee.getEvent(description)
     def descMap = zigbee.parseDescriptionAsMap(description)
 
@@ -86,7 +86,7 @@ def parse(String description) {
         sendEvent(event)
     } else {
         List result = []
-        log.debug "Desc Map: $descMap"
+        // log.debug "Desc Map: $descMap"
 
         List attrData = [[clusterInt: descMap.clusterInt ,attrInt: descMap.attrInt, value: descMap.value]]
         descMap.additionalAttrs.each {
@@ -94,24 +94,24 @@ def parse(String description) {
         }
 
         attrData.each {
-                def map = [:]
-                if (it.value && it.clusterInt == zigbee.SIMPLE_METERING_CLUSTER && it.attrInt == ATTRIBUTE_HISTORICAL_CONSUMPTION) {
-                        log.debug "power"
-                        map.name = "power"
-                        map.value = zigbee.convertHexToInt(it.value)/getPowerDiv()
-                        map.unit = "W"
-                }
-                else if (it.value && it.clusterInt == zigbee.SIMPLE_METERING_CLUSTER && it.attrInt == ATTRIBUTE_READING_INFO_SET) {
-                        log.debug "energy"
-                        map.name = "energy"
-                        map.value = zigbee.convertHexToInt(it.value)/getEnergyDiv()
-                        map.unit = "kWh"
-                }
+            def map = [:]
+            if (it.value && it.clusterInt == zigbee.SIMPLE_METERING_CLUSTER && it.attrInt == ATTRIBUTE_HISTORICAL_CONSUMPTION) {
+                log.debug "power"
+                map.name = "power"
+                map.value = zigbee.convertHexToInt(it.value)/getPowerDiv()
+                map.unit = "W"
+            }
+            else if (it.value && it.clusterInt == zigbee.SIMPLE_METERING_CLUSTER && it.attrInt == ATTRIBUTE_READING_INFO_SET) {
+                log.debug "energy"
+                map.name = "energy"
+                map.value = zigbee.convertHexToInt(it.value)/getEnergyDiv()
+                map.unit = "kWh"
+            }
 
-                if (map) {
-                        result << createEvent(map)
-                }
+            if (map) {
+                result << createEvent(map)
                 log.debug "Parse returned $map"
+            }
         }
         return result
     }
@@ -142,10 +142,10 @@ def ping() {
 }
 
 def refresh() {
-    log.debug "refresh"
-    zigbee.onOffRefresh() +
-    zigbee.electricMeasurementPowerRefresh() +
-    zigbee.readAttribute(zigbee.SIMPLE_METERING_CLUSTER, ATTRIBUTE_READING_INFO_SET)
+    log.debug "refresh()"
+    return zigbee.onOffRefresh() +
+        zigbee.electricMeasurementPowerRefresh() +
+        zigbee.readAttribute(zigbee.SIMPLE_METERING_CLUSTER, ATTRIBUTE_READING_INFO_SET)
 }
 
 def configure() {
@@ -153,20 +153,21 @@ def configure() {
     sendEvent(name: "checkInterval", value: 2 * 60 + 10 * 60, displayed: false, data: [protocol: "zigbee", hubHardwareId: device.hub.hardwareID])
     log.debug "Configuring Reporting"
     return refresh() +
-           zigbee.onOffConfig() +
-           zigbee.configureReporting(zigbee.SIMPLE_METERING_CLUSTER, ATTRIBUTE_READING_INFO_SET, DataType.UINT48, 1, 600, 0x01) +
-           zigbee.electricMeasurementPowerConfig(1, 600, 0x0001) +
-           zigbee.simpleMeteringPowerConfig()
+        zigbee.onOffConfig() +
+        zigbee.configureReporting(zigbee.SIMPLE_METERING_CLUSTER, ATTRIBUTE_READING_INFO_SET, DataType.UINT48, 1, 600, 0x01) +
+        zigbee.electricMeasurementPowerConfig(1, 600, 0x0001)
 }
 
 private int getPowerDiv() {
-    isSengledOutlet() ? 10 : 1
+    // isSengledOutlet() ? 10 : 1
+    return 1
 }
 
 private int getEnergyDiv() {
-    isSengledOutlet() ? 10000 : 100
+    // isSengledOutlet() ? 10000 : 100
+    return 100
 }
 
-private boolean isSengledOutlet() {
-    device.getDataValue("model") == "E1C-NB7"
-}
+// private boolean isSengledOutlet() {
+//     device.getDataValue("model") == "E1C-NB7"
+// }
