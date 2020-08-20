@@ -26,10 +26,6 @@ metadata {
         capability "Sensor"
         capability "Configuration"
         capability "Health Check"
-        command "virtualOn"
-        command "virtualOff"
-
-        command "reboot"
     }
 
     tiles (scale: 2){
@@ -92,14 +88,14 @@ def off() {
     }
 }
 
-def virtualOn() {
-    log.debug "child on"
-    sendEvent(name: "switch", value: "on")
+def poll() {
+    log.debug "poll()"
 }
 
-def virtualOff() {
-    log.debug "child off"
-    sendEvent(name: "switch", value: "off")
+def parseEventData(Map results) {
+    results.each { name, value ->
+        //Parse events and optionally create SmartThings events
+    }
 }
 
 def generateEvent(Map results) {
@@ -115,14 +111,4 @@ def generateEvent(Map results) {
         }
     }
     return null
-}
-
-def poll() {
-    log.debug "poll()"
-}
-
-def parseEventData(Map results) {
-    results.each { name, value ->
-        //Parse events and optionally create SmartThings events
-    }
 }
