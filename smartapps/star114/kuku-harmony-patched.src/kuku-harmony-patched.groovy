@@ -307,13 +307,8 @@ def addTvDeviceTV() {
         input name: "selectedBack", type: "enum", title: "Back", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
         input name: "selectedUp", type: "enum", title: "Up", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
         input name: "selectedDown", type: "enum", title: "Down", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
-        input name: "selectedLeft", type: "enum", title: "Right", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
-        input name: "selectedRight", type: "enum", title: "Left", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
-        input name: "custom1", type: "enum", title: "Custom1", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
-        input name: "custom2", type: "enum", title: "Custom2", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
-        input name: "custom3", type: "enum", title: "Custom3", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
-        input name: "custom4", type: "enum", title: "Custom4", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
-        input name: "custom5", type: "enum", title: "Custom5", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
+        input name: "selectedLeft", type: "enum", title: "Left", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
+        input name: "selectedRight", type: "enum", title: "Right", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
     }
 
     //state.selectedCommands["power"] = selectedPowerToggle
@@ -332,11 +327,6 @@ def addTvDeviceTV() {
     state.selectedCommands["down"] = selectedDown
     state.selectedCommands["left"] = selectedLeft
     state.selectedCommands["right"] = selectedRight
-    state.selectedCommands["custom1"] = custom1
-    state.selectedCommands["custom2"] = custom2
-    state.selectedCommands["custom3"] = custom3
-    state.selectedCommands["custom4"] = custom4
-    state.selectedCommands["custom5"] = custom5
 
     monitorMenu()
 }

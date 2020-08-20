@@ -51,15 +51,6 @@ metadata {
         command "down"
         command "left"
         command "right"
-
-        command "custom1"
-        command "custom2"
-        command "custom3"
-        command "custom4"
-        command "custom5"
-
-        command "virtualOn"
-        command "virtualOff"
     }
 
     tiles (scale: 2){
@@ -280,31 +271,6 @@ def right() {
     parent.command(this, "right")
 }
 
-def custom1() {
-    log.debug "child custom1()"
-    parent.command(this, "custom1")
-}
-
-def custom2() {
-    log.debug "child custom2()"
-    parent.command(this, "custom2")
-}
-
-def custom3() {
-    log.debug "child custom3()"
-    parent.command(this, "custom3")
-}
-
-def custom4() {
-    log.debug "child custom4()"
-    parent.command(this, "custom4")
-}
-
-def custom5() {
-    log.debug "child custom5()"
-    parent.command(this, "custom5")
-}
-
 def on() {
     log.debug "child on()"
 
@@ -334,14 +300,14 @@ def off() {
     }
 }
 
-def virtualOn() {
-    log.debug "child on()"
-    sendEvent(name: "switch", value: "on")
+def poll() {
+    log.debug "poll()"
 }
 
-def virtualOff() {
-    log.debug "child off()"
-    sendEvent(name: "switch", value: "off")
+def parseEventData(Map results) {
+    results.each { name, value ->
+        //Parse events and optionally create SmartThings events
+    }
 }
 
 def generateEvent(Map results) {
@@ -357,14 +323,4 @@ def generateEvent(Map results) {
         }
     }
     return null
-}
-
-def poll() {
-    log.debug "poll()"
-}
-
-def parseEventData(Map results) {
-    results.each { name, value ->
-        //Parse events and optionally create SmartThings events
-    }
 }
