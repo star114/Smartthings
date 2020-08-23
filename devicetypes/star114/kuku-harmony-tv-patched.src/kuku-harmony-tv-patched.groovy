@@ -19,9 +19,14 @@
  */
 
 metadata {
-    definition (name: "KuKu Harmony_TV (Patched)", namespace: "star114", author: "KuKu/star114") {
+    definition (name: "KuKu Harmony_TV (Patched)", namespace: "star114", author: "KuKu/star114", ocfDeviceType: "oic.d.tv") {
         capability "Actuator"
         capability "Switch"
+        capability "Audio Mute"
+        capability "Audio Volume"
+        capability "Tv Channel"
+        capability "Button"
+        capability "Media Input Source"
         capability "Refresh"
         capability "Sensor"
         capability "Configuration"
@@ -29,7 +34,7 @@ metadata {
 
         command "volup"
         command "chup"
-        command "mute"
+        command "mute_unmute"
         command "voldown"
         command "chdown"
         command "menu"
@@ -67,8 +72,8 @@ metadata {
         standardTile ("chup", "device.chup", width: 2, height: 1, decoration: "flat", canChangeIcon: false, canChangeBackground: false) {
             state "chup", label: "Channel Up", action: "chup", defaultState: true
         }
-        standardTile ("mute", "device.mute", width: 2, height: 1, decoration: "flat", canChangeIcon: false, canChangeBackground: false) {
-            state "mute", label: "Mute", action: "mute", defaultState: true
+        standardTile ("mute_unmute", "device.mute_unmute", width: 2, height: 1, decoration: "flat", canChangeIcon: false, canChangeBackground: false) {
+            state "mute_unmute", label: "Mute Unmute", action: "mute_unmute", defaultState: true
         }
         standardTile ("voldown", "device.voldown", width: 2, height: 1, decoration: "flat", canChangeIcon: false, canChangeBackground: false) {
             state "voldown", label: "Volume Down", action: "voldown", defaultState: true
@@ -137,7 +142,7 @@ metadata {
 
     main(["switch"])
     details(["switch", "volup", "chup",
-            "mute", "voldown", "chdown",
+            "mute_unmute", "voldown", "chdown",
             "menu", "home", "input", "back",
             "number_1", "number_2", "number_3",
             "number_4", "number_5", "number_6",
@@ -166,8 +171,8 @@ def chup() {
     parent.command(this, "chup")
 }
 
-def mute() {
-    log.debug "child mute()"
+def mute_unmute() {
+    log.debug "child mute_unmute()"
     parent.command(this, "mute")
 }
 
@@ -271,6 +276,7 @@ def right() {
     parent.command(this, "right")
 }
 
+// capability: Switch
 def on() {
     log.debug "child on()"
 
@@ -298,6 +304,56 @@ def off() {
     } else {
         log.debug "Already turned off, skip OFF command"
     }
+}
+
+// capability: Audio Mute
+def setMute(state) {
+    log.debug "setMute($state)"
+}
+
+def mute() {
+    log.debug "mute()"
+    mute_unmute()
+}
+
+def unmute() {
+    log.debug "unmute()"
+    mute_unmute()
+}
+
+// capability: Audio Volume
+def setVolume(volume) {
+    log.debug "setVolume($volume)"
+}
+
+def volumeUp() {
+    log.debug "volumeUp()"
+    volup()
+}
+
+def volumeDown() {
+    log.debug "volumeDown()"
+    voldown()
+}
+
+// capability: Tv Channel
+def setTvChannel(channel) {
+    log.debug "setTvChannel($channel)"
+}
+
+def channelUp() {
+    log.debug "channelUp()"
+    chup()
+}
+
+def channelDown() {
+    log.debug "channelDown()"
+    chdown()
+}
+
+// capability: Media Input Source
+def setInputSource(mode) {
+    log.debug "setInputSource($mode)"
 }
 
 def poll() {
