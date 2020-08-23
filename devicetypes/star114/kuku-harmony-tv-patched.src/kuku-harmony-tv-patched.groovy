@@ -153,7 +153,18 @@ metadata {
 
 def installed() {
     log.debug "installed()"
-    //configure()
+    configure()
+    // set to default
+    sendEvent(name: "switch", value: "off", displayed: true)
+    sendEvent(name: "supportedInputSources", value:["digitalTv", "YouTube", "digital", "wifi"])
+}
+
+def configure() {
+    log.debug "configure()"
+}
+
+def updated() {
+    log.debug "updated()"
 }
 
 // parse events into attributes

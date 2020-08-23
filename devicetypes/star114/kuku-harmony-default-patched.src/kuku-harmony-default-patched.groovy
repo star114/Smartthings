@@ -44,6 +44,8 @@ metadata {
 def installed() {
     log.debug "installed()"
     configure()
+    // set to default
+    sendEvent(name: "switch", value: "off", displayed: true)
 }
 
 def configure() {
