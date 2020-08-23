@@ -19,7 +19,7 @@
  */
 
 metadata {
-    definition (name: "KuKu Harmony_Default (Patched)", namespace: "star114", author: "KuKu/star114") {
+    definition (name: "KuKu Harmony_Default (Patched)", namespace: "star114", author: "KuKu/star114", ocfDeviceType: "oic.d.switch", vid: "generic-switch") {
         capability "Actuator"
         capability "Switch"
         capability "Refresh"

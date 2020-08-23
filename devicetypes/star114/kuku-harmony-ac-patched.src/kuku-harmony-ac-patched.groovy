@@ -19,7 +19,7 @@
  */
 
 metadata {
-    definition (name: "KuKu Harmony_AC (Patched)", namespace: "star114", author: "KuKu/star114", ocfDeviceType: "oic.d.airconditioner") {
+    definition (name: "KuKu Harmony_AC (Patched)", namespace: "star114", author: "KuKu/star114", ocfDeviceType: "oic.d.airconditioner", vid: "generic-thermostat") {
         capability "Actuator"
         capability "Switch"
         capability "Thermostat Mode"
