@@ -25,7 +25,7 @@ metadata {
         capability "Health Check"
         capability "Sensor"
 
-        fingerprint profileId: "0104", deviceId: "0302", inClusters: "0000,0001,0003,0402", model: "RH3052", deviceJoinName: "Temperature & Humidity Sensor"
+        fingerprint endpointId: "01", profileId: "0104", deviceId: "0302", inClusters: "0000, 0001, 0003, 0402, 0405", outClusters: "0003, 0402, 0405", manufacturer: "TUYATEC-q4lh9j7u", model: "RH3052", deviceJoinName: "Hejhome Zigbee Temperature & Humidity Sensor"
 
     }
 
