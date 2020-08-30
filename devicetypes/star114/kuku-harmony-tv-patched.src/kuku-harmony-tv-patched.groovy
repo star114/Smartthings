@@ -22,11 +22,10 @@ metadata {
     definition (name: "KuKu Harmony_TV (Patched)", namespace: "star114", author: "KuKu/star114", ocfDeviceType: "oic.d.tv") {
         capability "Actuator"
         capability "Switch"
+        capability "Button"
         capability "Audio Mute"
         capability "Audio Volume"
         capability "Tv Channel"
-        capability "Button"
-        capability "Media Input Source"
         capability "Refresh"
         capability "Sensor"
         capability "Configuration"
@@ -41,6 +40,7 @@ metadata {
         command "home"
         command "input"
         command "back"
+        command "select"
         command "number_1"
         command "number_2"
         command "number_3"
@@ -94,6 +94,9 @@ metadata {
         standardTile ("back", "device.back", width: 2, height: 1, decoration: "flat", canChangeIcon: false, canChangeBackground: false) {
             state "back", label: "BACK", action: "back", defaultState: true
         }
+        standardTile ("select", "device.select", width: 2, height: 1, decoration: "flat", canChangeIcon: false, canChangeBackground: false) {
+            state "select", label: "SELECT", action: "select", defaultState: true
+        }
 
         standardTile ("number_1", "device.number_1", width: 2, height: 1, decoration: "flat", canChangeIcon: false, canChangeBackground: false) {
             state "number_1", label: "1", action: "number_1", defaultState: true
@@ -143,7 +146,7 @@ metadata {
     main(["switch"])
     details(["switch", "volup", "chup",
             "mute_unmute", "voldown", "chdown",
-            "menu", "home", "input", "back",
+            "menu", "home", "input", "back", "select",
             "number_1", "number_2", "number_3",
             "number_4", "number_5", "number_6",
             "number_7", "number_8", "number_9",
@@ -156,7 +159,9 @@ def installed() {
     configure()
     // set to default
     sendEvent(name: "switch", value: "off", displayed: true)
-    sendEvent(name: "supportedInputSources", value:["digitalTv", "YouTube", "digital", "wifi"])
+    sendEvent(name: "tvChannel", value: "MBC")
+    sendEvent(name: "supportedButtonValues", value: "pushed", "down", "up")
+    sendEvent(name: "numberOfButtons", 24)
 }
 
 def configure() {
@@ -215,6 +220,11 @@ def input() {
 def back(value) {
     log.debug "child back()"
     parent.command(this, "back")
+}
+
+def select(value) {
+    log.debug "child select()"
+    parent.command(this, "select")
 }
 
 def number_1(value) {
@@ -320,51 +330,55 @@ def off() {
 // capability: Audio Mute
 def setMute(state) {
     log.debug "setMute($state)"
+    sendEvent(name: "mute", value: state)
 }
 
 def mute() {
     log.debug "mute()"
     mute_unmute()
+    sendEvent(name: "mute", value: "muted")
 }
 
 def unmute() {
     log.debug "unmute()"
     mute_unmute()
+    sendEvent(name: "mute", value: "unmuted")
 }
 
 // capability: Audio Volume
 def setVolume(volume) {
     log.debug "setVolume($volume)"
+    sendEvent(name: "volume", value: volume)
 }
 
 def volumeUp() {
     log.debug "volumeUp()"
     volup()
+    sendEvent(name: "volume", value: 0) // TODO
 }
 
 def volumeDown() {
     log.debug "volumeDown()"
     voldown()
+    sendEvent(name: "volume", value: 0) // TODO
 }
 
 // capability: Tv Channel
 def setTvChannel(channel) {
     log.debug "setTvChannel($channel)"
+    sendEvent(name: "tvChannel", value: channel)
 }
 
 def channelUp() {
     log.debug "channelUp()"
     chup()
+    sendEvent(name: "tvChannel", value: "MBC") // TODO
 }
 
 def channelDown() {
     log.debug "channelDown()"
     chdown()
-}
-
-// capability: Media Input Source
-def setInputSource(mode) {
-    log.debug "setInputSource($mode)"
+    sendEvent(name: "tvChannel", value: "KBS") // TODO
 }
 
 def poll() {
