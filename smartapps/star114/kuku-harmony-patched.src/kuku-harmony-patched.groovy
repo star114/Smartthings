@@ -305,6 +305,7 @@ def addTvDeviceTV() {
         input name: "selectedHome", type: "enum", title: "Home", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
         input name: "selectedInput", type: "enum", title: "Input", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
         input name: "selectedBack", type: "enum", title: "Back", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
+        input name: "selectedSelect", type: "enum", title: "Select", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
         input name: "selectedUp", type: "enum", title: "Up", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
         input name: "selectedDown", type: "enum", title: "Down", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
         input name: "selectedLeft", type: "enum", title: "Left", options: labelOfCommand, submitOnChange: true, multiple: false, required: false
@@ -323,6 +324,7 @@ def addTvDeviceTV() {
     state.selectedCommands["home"] = selectedHome
     state.selectedCommands["input"] = selectedInput
     state.selectedCommands["back"] = selectedBack
+    state.selectedCommands["select"] = selectedSelect
     state.selectedCommands["up"] = selectedUp
     state.selectedCommands["down"] = selectedDown
     state.selectedCommands["left"] = selectedLeft
@@ -344,11 +346,11 @@ def monitorMenu() {
     if (selectedMonitorType) {
         switch (selectedMonitorType) {
             case "Power Meter":
-            powerMonitorMenu()
-            break
+                powerMonitorMenu()
+                break
             case "Contact":
-            contactMonitorMenu()
-            break
+                contactMonitorMenu()
+                break
         }
     }
 }
