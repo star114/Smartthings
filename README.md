@@ -35,6 +35,29 @@ For [Hejhome GoQual 3-Way ZigBee Switch](https://www.hej.life/shop/?idx=17)
 * Special thanks to WooBooung. (forked from [WooBooung's repo](https://github.com/WooBooung/BooungThings/blob/master/devicetypes/woobooung/integrated-zigbee-switch.src/integrated-zigbee-switch.groovy))
 * Compatible with several zigbee switch at the same time.
 
+### hue-motion-sensor
+
+For [Philips Hue Motion Sensor]()
+* Forked from [bogdanalexe90's repo](https://github.com/bogdanalexe90/hueMotionSensor)
+
+#### motion
+
+Very snappy, works better than original smartthings motion sensor (even if the DTH runs in the cloud) having no delay or sleep time for reporting the motion events.
+
+Also you can configure the following: Motion sensitivity (Low, Medium, High). Default is High
+
+#### temperature
+
+It's accurate and reported in time. You can also correct the readings by configuring an offset.
+
+#### Illuminance
+
+It's accurate and reported in time. You can also correct the readings by configuring an offset.
+
+#### battery
+
+Used the same logic as the smartthings motion sensor. Seems accurate.
+
 ### kuku-harmony-default-patched
 
 Virtual Device for SmartApp - kuku-harmony-patched
