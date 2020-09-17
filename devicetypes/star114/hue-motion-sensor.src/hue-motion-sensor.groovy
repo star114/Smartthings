@@ -117,7 +117,8 @@ private Map getBatteryResultEvent(BigDecimal newVolts) {
         name: "battery",
         value: newBatteryPercent,
         descriptionText: "{{ device.displayName }} battery was {{ value }}%",
-        unit: "%"
+        unit: "%",
+        displayed: true
     ])
 }
 
@@ -137,7 +138,8 @@ private Map getTemperatureResultEvent(BigDecimal newTemp) {
         name: "temperature",
         value: newTemp,
         descriptionText: "{{ device.displayName }} was {{ value }}°",
-        unit: getTemperatureScale()
+        unit: getTemperatureScale(),
+        displayed: true
     ])
 }
 
@@ -155,7 +157,8 @@ private Map getLuminanceResultEvent(Integer newIlluminance) {
         name: "illuminance",
         value: newIlluminance,
         descriptionText: "{{ device.displayName }} was {{ value }} lux",
-        unit: "lux"
+        unit: "lux",
+        displayed: true
     ])
 }
 
