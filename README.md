@@ -77,3 +77,8 @@ Virtual Device for SmartApp - kuku-harmony-patched
 
 Virtual Device for SmartApp - kuku-harmony-patched
 * TV Switch + Device controller
+
+### smartweather-station-for-korea
+
+Virtual Device for smart weather station from [Korea public data portal](https://data.go.kr)
+* forked from [WooBooung's repo](https://github.com/WooBooung/BooungThings/blob/master/devicetypes/woobooung/smartweather-station-for-korea.src/smartweather-station-for-korea.groovy)
