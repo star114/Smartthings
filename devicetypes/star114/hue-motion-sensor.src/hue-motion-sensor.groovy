@@ -265,6 +265,13 @@ def ping() {
     zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, zigbee.BATTERY_MEASURE_VALUE)
 }
 
+def installed() {
+    log.info "### Installed"
+    // set to default
+    sendEvent(name: "illuminance", value: 0 as int, unit: "lux", displayed: true)
+    refresh()
+}
+
 def refresh() {
     log.info "### Refresh"
 
