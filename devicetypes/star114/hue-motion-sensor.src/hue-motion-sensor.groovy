@@ -16,12 +16,12 @@
 import physicalgraph.zigbee.zcl.DataType
 
 metadata {
-    definition (name: "Hue Motion Sensor", namespace: "star114", author: "Bogdan Alexe/star114", vid: "generic-motion", ocfDeviceType: "x.com.st.d.sensor.motion") {
+    definition (name: "Hue Motion Sensor", namespace: "star114", author: "Bogdan Alexe/star114", vid: "generic-motion-4", ocfDeviceType: "x.com.st.d.sensor.motion") {
         capability "Motion Sensor"
         capability "Configuration"
         capability "Battery"
-        capability "Illuminance Measurement"
         capability "Temperature Measurement"
+        capability "Illuminance Measurement"
         capability "Refresh"
         capability "Sensor"
         capability "Health Check"
@@ -52,7 +52,7 @@ metadata {
         }
 
         valueTile("temperature", "device.temperature", width: 2, height: 2) {
-            state("default", label: '${currentValue}°', unit: 'dF',
+            state("temperature", label: '${currentValue}°', unit: 'dF',
                 backgroundColors: [
                     // Celsius
                     [value: 0, color: "#153591"],
@@ -75,7 +75,7 @@ metadata {
         }
 
         valueTile("illuminance", "device.illuminance", width: 2, height: 2, decoration: "flat") {
-            state "default", label:'${currentValue}'
+            state "luminosity", label:'${currentValue} lux', unit:"lux"
         }
 
         valueTile("battery", "device.battery", width: 2, height: 2, decoration: "flat") {
@@ -157,6 +157,7 @@ private Map getLuminanceResultEvent(Integer newIlluminance) {
         name: "illuminance",
         value: newIlluminance,
         descriptionText: "{{ device.displayName }} was {{ value }} lux",
+        unit: "lux",
         displayed: true
     ])
 }
@@ -262,13 +263,6 @@ Map parse(String description) {
 def ping() {
     log.info "### Ping"
     zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, zigbee.BATTERY_MEASURE_VALUE)
-}
-
-def installed() {
-    log.info "### Installed"
-    // set to default
-    sendEvent(name: "illuminance", value: 0, displayed: true)
-    refresh()
 }
 
 def refresh() {
