@@ -20,8 +20,8 @@ metadata {
         capability "Motion Sensor"
         capability "Configuration"
         capability "Battery"
-        capability "Temperature Measurement"
         capability "Illuminance Measurement"
+        capability "Temperature Measurement"
         capability "Refresh"
         capability "Sensor"
         capability "Health Check"
@@ -52,7 +52,7 @@ metadata {
         }
 
         valueTile("temperature", "device.temperature", width: 2, height: 2) {
-            state("temperature", label: '${currentValue}°', unit: 'dF',
+            state("default", label: '${currentValue}°', unit: 'dF',
                 backgroundColors: [
                     // Celsius
                     [value: 0, color: "#153591"],
@@ -75,7 +75,7 @@ metadata {
         }
 
         valueTile("illuminance", "device.illuminance", width: 2, height: 2, decoration: "flat") {
-            state "luminosity", label:'${currentValue} lux', unit:"lux"
+            state "default", label:'${currentValue}'
         }
 
         valueTile("battery", "device.battery", width: 2, height: 2, decoration: "flat") {
@@ -157,7 +157,6 @@ private Map getLuminanceResultEvent(Integer newIlluminance) {
         name: "illuminance",
         value: newIlluminance,
         descriptionText: "{{ device.displayName }} was {{ value }} lux",
-        unit: "lux",
         displayed: true
     ])
 }
@@ -268,7 +267,7 @@ def ping() {
 def installed() {
     log.info "### Installed"
     // set to default
-    sendEvent(name: "illuminance", value: 0 as int, unit: "lux", displayed: true)
+    sendEvent(name: "illuminance", value: 0, displayed: true)
     refresh()
 }
 
