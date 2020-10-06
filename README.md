@@ -82,3 +82,9 @@ Virtual Device for SmartApp - kuku-harmony-patched
 
 Virtual Device for smart weather station from [Korea public data portal](https://data.go.kr)
 * forked from [WooBooung's repo](https://github.com/WooBooung/BooungThings/blob/master/devicetypes/woobooung/smartweather-station-for-korea.src/smartweather-station-for-korea.groovy)
+
+### messenger-telegram
+
+Virtual Device for Telegram Messenger
+* forked from [fison67's repo](https://github.com/fison67/Smartthings-DTH/blob/master/devicetypes/fison67/messenger-telegram.src/messenger-telegram.groovy)
+* Not working correctly without workaround. (use https://msnoti.herokuapp.com not telegram api server directly)
