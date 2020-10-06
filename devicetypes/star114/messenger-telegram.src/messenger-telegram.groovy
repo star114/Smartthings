@@ -66,7 +66,8 @@ def updated() {}
 def sendCommand(text){
     def encodedText = java.net.URLEncoder.encode(text, "UTF-8").replace("%3E%3E", "%0A")
     def params = [
-        uri: "https://api.telegram.org/bot${settings._token}/sendMessage?chat_id=${settings._id}&text=${encodedText}"
+        // uri: "https://api.telegram.org/bot${settings._token}/sendMessage?chat_id=${settings._id}&text=${encodedText}"
+        uri: "https://msnoti.herokuapp.com/?token=${settings._token}&id=${settings._id}&text=${encodedText}"
     ]
 
     try {
