@@ -37,7 +37,7 @@ For [Hejhome GoQual 3-Way ZigBee Switch](https://www.hej.life/shop/?idx=17)
 
 ### hue-motion-sensor
 
-For [Philips Hue Motion Sensor]()
+For [Philips Hue Motion Sensor](https://www.philips-hue.com/en-us/p/hue-motion-sensor/046677473389)
 * Forked from [bogdanalexe90's repo](https://github.com/bogdanalexe90/hueMotionSensor)
 
 #### motion
@@ -57,6 +57,12 @@ It's accurate and reported in time. You can also correct the readings by configu
 #### battery
 
 Used the same logic as the smartthings motion sensor. Seems accurate.
+
+### blitzwoif-water-leak-sensor
+
+For [BlitzWolf BW-IS5 Zigbee Water Leak Sensor](https://ko.aliexpress.com/item/4000648797059.html?spm=a2g0o.productlist.0.0.46161eeeY4ne7r&algo_pvid=3afc4b5b-bf57-40f9-82f4-fbc8b5f23429&algo_expid=3afc4b5b-bf57-40f9-82f4-fbc8b5f23429-0&btsid=0bb0622c16020384037183783eb183&ws_ab_test=searchweb0_0,searchweb201602_,searchweb201603_)
+* Forked from [SmartThingsPublic repo: Orvibo Moisture Sensor](https://github.com/SmartThingsCommunity/SmartThingsPublic/blob/5544550ac6ec5e1d6fbedd83ea340ce65262907b/devicetypes/smartthings/orvibo-Moisture-Sensor.src/orvibo-Moisture-Sensor.groovy)
+* Compatible with blitzwoif water leak sensor footprint
 
 ### kuku-harmony-default-patched
 
