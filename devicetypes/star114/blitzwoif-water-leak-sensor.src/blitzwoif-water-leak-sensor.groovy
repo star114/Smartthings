@@ -94,12 +94,16 @@ def parse(String description) {
     result
 }
 
+/**
+ * PING is used by Device-Watch in attempt to reach the Device
+ **/
 def ping() {
+    log.debug "ping()"
     refresh()
 }
 
 def refresh() {
-    log.debug "Refreshing Values"
+    log.debug "refresh()"
     def refreshCmds = []
     refreshCmds += zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, 0x0021)
     refreshCmds += zigbee.readAttribute(zigbee.IAS_ZONE_CLUSTER, zigbee.ATTRIBUTE_IAS_ZONE_STATUS) +
@@ -108,15 +112,50 @@ def refresh() {
     refreshCmds
 }
 
-def installed(){
-    log.debug "call installed()"
-    sendEvent(name: "checkInterval", value: 6 * 60 * 60 + 5 * 60, displayed: false, data: [protocol: "zigbee", hubHardwareId: device.hub.hardwareID, offlinePingable: "1"])
+def installed() {
+    log.debug "installed()"
+    state.hasConfiguredHealthCheck = false
+    refresh()
+}
+
+def updated() {
+    log.debug "updated()"
+    state.hasConfiguredHealthCheck = false
+    refresh()
+}
+
+def uninstalled() {
+    unschedule("healthPoll")
+}
+
+def poll() {
+    log.debug "poll()"
+    refresh()
+}
+
+def healthPoll() {
+    log.debug "healthPoll()"
+    def cmds = refresh()
+    cmds.each { sendHubCommand(new physicalgraph.device.HubAction(it)) }
+}
+
+def configureHealthCheck() {
+    Integer hcIntervalMinutes = 12
+    if (!state.hasConfiguredHealthCheck) {
+        log.debug "Configuring Health Check, Reporting"
+        unschedule("healthPoll")
+        runEvery5Minutes("healthPoll")
+        def healthEvent = [name: "checkInterval", value: hcIntervalMinutes * 60, displayed: false, data: [protocol: "zigbee", hubHardwareId: device.hub.hardwareID, offlinePingable: "1"]]
+        // Device-Watch allows 2 check-in misses from device
+        sendEvent(healthEvent)
+        state.hasConfiguredHealthCheck = true
+    }
 }
 
 def configure() {
-    sendEvent(name: "checkInterval", value: 6 * 60 * 60 + 5 * 60, displayed: false, data: [protocol: "zigbee", hubHardwareId: device.hub.hardwareID, offlinePingable: "1"])
+    log.debug "configure()"
+    configureHealthCheck()
 
-    log.debug "Configuring Reporting"
     def configCmds = []
     configCmds += zigbee.configureReporting(zigbee.POWER_CONFIGURATION_CLUSTER, 0x0021, DataType.UINT8, 30, 21600, 0x10)
     refresh() + configCmds
