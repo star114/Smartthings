@@ -140,7 +140,7 @@ def healthPoll() {
 }
 
 def configureHealthCheck() {
-    Integer hcIntervalMinutes = 360
+    Integer hcIntervalMinutes = 365
     if (!state.hasConfiguredHealthCheck) {
         log.debug "Configuring Health Check, Reporting"
         unschedule("healthPoll")
