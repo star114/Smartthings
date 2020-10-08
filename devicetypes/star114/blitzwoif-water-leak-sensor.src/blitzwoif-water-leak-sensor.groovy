@@ -140,12 +140,12 @@ def healthPoll() {
 }
 
 def configureHealthCheck() {
-    Integer hcIntervalMinutes = 12
+    Integer hcIntervalMinutes = 360
     if (!state.hasConfiguredHealthCheck) {
         log.debug "Configuring Health Check, Reporting"
         unschedule("healthPoll")
         runEvery5Minutes("healthPoll")
-        def healthEvent = [name: "checkInterval", value: hcIntervalMinutes * 60, displayed: false, data: [protocol: "zigbee", hubHardwareId: device.hub.hardwareID, offlinePingable: "1"]]
+        def healthEvent = [name: "checkInterval", value: hcIntervalMinutes * 60, displayed: false, data: [protocol: "zigbee", hubHardwareId: device.hub.hardwareID]]
         // Device-Watch allows 2 check-in misses from device
         sendEvent(healthEvent)
         state.hasConfiguredHealthCheck = true
