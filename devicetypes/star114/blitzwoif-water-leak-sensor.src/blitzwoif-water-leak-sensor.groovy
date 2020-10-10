@@ -115,16 +115,17 @@ def refresh() {
 def installed() {
     log.debug "installed()"
     state.hasConfiguredHealthCheck = false
-    refresh()
+    configure()
 }
 
 def updated() {
     log.debug "updated()"
     state.hasConfiguredHealthCheck = false
-    refresh()
+    configure()
 }
 
 def uninstalled() {
+    log.debug "uninstalled()"
     // unschedule("healthPoll")
 }
 
@@ -141,8 +142,8 @@ def poll() {
 
 def configureHealthCheck() {
     // Power configuration reporting time (max) = 21600 s = 360 min
-    // 5 min extra for communication
-    Integer hcIntervalMinutes = 365
+    // 5 min lag time for communication
+    Integer hcIntervalMinutes = 360 + 5
     if (!state.hasConfiguredHealthCheck) {
         log.debug "Configuring Health Check, Reporting"
         // unschedule("healthPoll")
