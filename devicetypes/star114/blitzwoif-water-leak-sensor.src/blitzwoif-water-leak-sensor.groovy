@@ -135,10 +135,10 @@ def configureHealthCheck() {
     log.debug "Configuring Health Check, Reporting"
     
     // Power configuration reporting time (max) = 21600 s = 360 mins = 6 hours
-    // 5 min lag time for communication
-    Integer hcIntervalMinutes = 360 + 5
-    def healthEvent = [name: "checkInterval", value: hcIntervalMinutes * 60, displayed: false, data: [protocol: "zigbee", hubHardwareId: device.hub.hardwareID]]
     // Device-Watch allows 2 check-in misses from device
+    // 5 min lag time for communication
+    Integer hcIntervalMinutes = 360 * 2 + 5
+    def healthEvent = [name: "checkInterval", value: hcIntervalMinutes * 60, displayed: false, data: [protocol: "zigbee", hubHardwareId: device.hub.hardwareID]]
     sendEvent(healthEvent)
 }
 
