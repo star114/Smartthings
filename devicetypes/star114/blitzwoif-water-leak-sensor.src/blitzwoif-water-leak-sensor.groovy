@@ -77,7 +77,7 @@ def parse(String description) {
             List cmds = zigbee.enrollResponse()
             log.debug "enroll response: ${cmds}"
             result = cmds?.collect { new physicalgraph.device.HubAction(it) }
-        }else {
+        } else {
             Map descMap = zigbee.parseDescriptionAsMap(description)
             if (descMap?.clusterInt == 0x0500 && descMap.attrInt == 0x0002) {
                 map = getMoistureResult(description)
@@ -86,7 +86,7 @@ def parse(String description) {
             }
         }
     }
-    if(map&&!result){
+    if (map && !result) {
         result = createEvent(map)
     }
     log.debug "Parse returned $result"
@@ -114,19 +114,16 @@ def refresh() {
 
 def installed() {
     log.debug "installed()"
-    state.hasConfiguredHealthCheck = false
     configure()
 }
 
 def updated() {
     log.debug "updated()"
-    state.hasConfiguredHealthCheck = false
-    configure()
+    refresh()
 }
 
 def uninstalled() {
     log.debug "uninstalled()"
-    // unschedule("healthPoll")
 }
 
 def poll() {
@@ -134,25 +131,15 @@ def poll() {
     refresh()
 }
 
-// def healthPoll() {
-//     log.debug "healthPoll()"
-//     def cmds = refresh()
-//     cmds.each { sendHubCommand(new physicalgraph.device.HubAction(it)) }
-// }
-
 def configureHealthCheck() {
-    // Power configuration reporting time (max) = 21600 s = 360 min
+    log.debug "Configuring Health Check, Reporting"
+    
+    // Power configuration reporting time (max) = 21600 s = 360 mins = 6 hours
+    // Device-Watch allows 2 check-in misses from device
     // 5 min lag time for communication
-    Integer hcIntervalMinutes = 360 + 5
-    if (!state.hasConfiguredHealthCheck) {
-        log.debug "Configuring Health Check, Reporting"
-        // unschedule("healthPoll")
-        // runEvery5Minutes("healthPoll")
-        def healthEvent = [name: "checkInterval", value: hcIntervalMinutes * 60, displayed: false, data: [protocol: "zigbee", hubHardwareId: device.hub.hardwareID]]
-        // Device-Watch allows 2 check-in misses from device
-        sendEvent(healthEvent)
-        state.hasConfiguredHealthCheck = true
-    }
+    Integer hcIntervalMinutes = 360 * 2 + 5
+    def healthEvent = [name: "checkInterval", value: hcIntervalMinutes * 60, displayed: false, data: [protocol: "zigbee", hubHardwareId: device.hub.hardwareID]]
+    sendEvent(healthEvent)
 }
 
 def configure() {
@@ -160,6 +147,7 @@ def configure() {
     configureHealthCheck()
 
     def configCmds = []
+    // battery reporting interval max: 21600 s
     configCmds += zigbee.configureReporting(zigbee.POWER_CONFIGURATION_CLUSTER, 0x0021, DataType.UINT8, 30, 21600, 0x10)
     refresh() + configCmds
 }
@@ -176,7 +164,7 @@ def getMoistureResult(description) {
 }
 
 def getBatteryPercentageResult(rawValue) {
-    log.debug "Battery Percentage"
+    log.debug "getBatteryPercentageResult()"
     def result = [:]
 
     if (0 <= rawValue && rawValue <= 200) {
