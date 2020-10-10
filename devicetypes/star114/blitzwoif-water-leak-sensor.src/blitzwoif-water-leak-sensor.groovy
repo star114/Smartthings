@@ -125,7 +125,7 @@ def updated() {
 }
 
 def uninstalled() {
-    unschedule("healthPoll")
+    // unschedule("healthPoll")
 }
 
 def poll() {
@@ -133,18 +133,20 @@ def poll() {
     refresh()
 }
 
-def healthPoll() {
-    log.debug "healthPoll()"
-    def cmds = refresh()
-    cmds.each { sendHubCommand(new physicalgraph.device.HubAction(it)) }
-}
+// def healthPoll() {
+//     log.debug "healthPoll()"
+//     def cmds = refresh()
+//     cmds.each { sendHubCommand(new physicalgraph.device.HubAction(it)) }
+// }
 
 def configureHealthCheck() {
+    // Power configuration reporting time (max) = 21600 s = 360 min
+    // 5 min extra for communication
     Integer hcIntervalMinutes = 365
     if (!state.hasConfiguredHealthCheck) {
         log.debug "Configuring Health Check, Reporting"
-        unschedule("healthPoll")
-        runEvery5Minutes("healthPoll")
+        // unschedule("healthPoll")
+        // runEvery5Minutes("healthPoll")
         def healthEvent = [name: "checkInterval", value: hcIntervalMinutes * 60, displayed: false, data: [protocol: "zigbee", hubHardwareId: device.hub.hardwareID]]
         // Device-Watch allows 2 check-in misses from device
         sendEvent(healthEvent)
