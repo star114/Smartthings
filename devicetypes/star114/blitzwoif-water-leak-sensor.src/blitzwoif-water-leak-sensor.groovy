@@ -38,9 +38,6 @@ metadata {
         status "dry": "zone status 0x0020 -- extended status 0x00"
         status "wet": "zone status 0x0021 -- extended status 0x00"
 
-        for (int i = 0; i <= 90; i += 10) {
-            status "battery 0021 0x${i}": "read attr - raw: 8C900100010A21000020C8, dni: 8C90, endpoint: 01, cluster: 0001, size: 0A, attrId: 0021, result: success, encoding: 20, value: ${i}"
-        }
     }
 
     tiles(scale: 2) {
@@ -81,8 +78,12 @@ def parse(String description) {
             Map descMap = zigbee.parseDescriptionAsMap(description)
             if (descMap?.clusterInt == 0x0500 && descMap.attrInt == 0x0002) {
                 map = getMoistureResult(description)
-            } else if (descMap?.clusterInt == 0x0001 && descMap?.attrInt == 0x0021 && descMap?.commandInt != 0x07 && descMap?.value) {
-                map = getBatteryPercentageResult(Integer.parseInt(descMap.value, 16))
+            } else if (descMap?.clusterInt == 0x0001 && descMap?.commandInt != 0x07 && descMap?.value) {
+                if (descMap?.attrInt == 0x0021) {
+                    map = getBatteryPercentageResult(Integer.parseInt(descMap.value, 16))
+                } else {
+                    map = getBatteryResult(Integer.parseInt(descMap.value, 16))
+                }
             }
         }
     }
@@ -105,7 +106,7 @@ def ping() {
 def refresh() {
     log.debug "refresh()"
     def refreshCmds = []
-    refreshCmds += zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, 0x0021)
+    refreshCmds += zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, 0x0020) // zigbee.BATTERY_MEASURE_VALUE
     refreshCmds += zigbee.readAttribute(zigbee.IAS_ZONE_CLUSTER, zigbee.ATTRIBUTE_IAS_ZONE_STATUS) +
         zigbee.enrollResponse()
 
@@ -114,7 +115,7 @@ def refresh() {
 
 def installed() {
     log.debug "installed()"
-    configure()
+    refresh()
 }
 
 def updated() {
@@ -133,7 +134,7 @@ def poll() {
 
 def configureHealthCheck() {
     log.debug "Configuring Health Check, Reporting"
-    
+
     // Power configuration reporting time (max) = 21600 s = 360 mins = 6 hours
     // Device-Watch allows 2 check-in misses from device
     // 5 min lag time for communication
@@ -148,13 +149,13 @@ def configure() {
 
     def configCmds = []
     // battery reporting interval max: 21600 s
-    configCmds += zigbee.configureReporting(zigbee.POWER_CONFIGURATION_CLUSTER, 0x0021, DataType.UINT8, 30, 21600, 0x10)
+    configCmds += zigbee.batteryConfig(30, 21600, 0x01)
     refresh() + configCmds
 }
 
 def getMoistureResult(description) {
     ZoneStatus zs = zigbee.parseZoneStatus(description)
-    def value = zs?.isAlarm1Set()?"wet":"dry"
+    def value = zs?.isAlarm1Set() ? "wet" : "dry"
     [
         name           : 'water',
         value          : value,
@@ -176,4 +177,28 @@ def getBatteryPercentageResult(rawValue) {
 
     log.debug "${device.displayName} battery was ${result.value}%"
     result
+}
+
+private Map getBatteryResult(rawValue) {
+    log.debug 'getBatteryResult()'
+    def linkText = getLinkText(device)
+
+    def result = [:]
+
+    def volts = rawValue / 10
+    if (!(rawValue == 0 || rawValue == 255)) {
+        def minVolts = 2.1
+        def maxVolts = 3.0
+        def pct = (volts - minVolts) / (maxVolts - minVolts)
+        def roundedPct = Math.round(pct * 100)
+        if (roundedPct <= 0)
+            roundedPct = 1
+        result.value = Math.min(100, roundedPct)
+        result.descriptionText = "${linkText} battery was ${result.value}%"
+        result.name = 'battery'
+
+    }
+
+    log.debug "${linkText} battery was ${result.value}%"
+    return result
 }

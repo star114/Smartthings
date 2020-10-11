@@ -81,10 +81,10 @@ def parse(String description) {
         Map descMap = zigbee.parseDescriptionAsMap(description)
         if (descMap.clusterInt == 0x0001 && descMap.commandInt != 0x07 && descMap?.value) {
             if (descMap.attrInt == 0x0021) {
-                        map = getBatteryPercentageResult(Integer.parseInt(descMap.value,16))
+                map = getBatteryPercentageResult(Integer.parseInt(descMap.value,16))
             } else {
                 map = getBatteryResult(Integer.parseInt(descMap.value, 16))
-                    }
+            }
         } else if (descMap?.clusterInt == zigbee.TEMPERATURE_MEASUREMENT_CLUSTER && descMap.commandInt == 0x07) {
             if (descMap.data[0] == "00") {
                 log.debug "TEMP REPORTING CONFIG RESPONSE: $descMap"
@@ -126,7 +126,7 @@ private Map getBatteryResult(rawValue) {
     log.debug 'Battery'
     def linkText = getLinkText(device)
 
-  def result = [:]
+    def result = [:]
 
     def volts = rawValue / 10
     if (!(rawValue == 0 || rawValue == 255)) {
