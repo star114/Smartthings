@@ -92,7 +92,7 @@ def updated() {
 def uninstalled() {
     log.debug "uninstalled()"
     unschedule()
-    removeChildDevices(childDevices())
+    removeChildDevices(childDevices)
 }
 
 private removeChildDevices(delete) {
@@ -127,7 +127,7 @@ def parse(String description) {
             if (childDevice) {
                 log.debug "parse - sendEvent child  $eventDescMap.sourceEndpoint"
                 childDevice.sendEvent(eventMap)
-            } else if (isAutoCreateChildDevice != false || getEndpointCount() == 0){
+            } else if (isAutoCreateChildDevice != false){
                 def model = device.getDataValue("model")
                 log.debug "Child device: $device.deviceNetworkId:${eventDescMap?.sourceEndpoint} was not found"
                 def parentEndpointInt = zigbee.convertHexToInt(endpointId)
@@ -145,7 +145,7 @@ def parse(String description) {
                         log.debug "FOUND CHILD!!!!! Change dni to $device.deviceNetworkId:$childEndpointHexString"
                         childByEndpointId.setDeviceNetworkId("$device.deviceNetworkId:$childEndpointHexString")
                     } else {
-                        log.debug "NOT FOUND CHILD!!!!! Create to $deviceLabel$deviceIndex"
+                        log.debug "NOT FOUND CHILD!!!!! Create to $deviceLabel$deviceIndex $device.deviceNetworkId:$childEndpointHexString"
                         createChildDevice("$deviceLabel$deviceIndex", childEndpointHexString)
                     }
                 }
@@ -207,6 +207,8 @@ private void createChildDevice(String deviceLabel, String endpointHexString) {
     } else {
         log.debug("createChildDevice: SKIP - $device.deviceNetworkId:${endpointHexString}")
     }
+    updated()
+    configure()
 }
 
 private getChildEndpoint(String dni) {
@@ -286,23 +288,9 @@ def ping() {
 }
 
 def refresh() {
-    def cmds = zigbee.onOffRefresh()
-    def endpointCount = getEndpointCount()
-
-    if (endpointCount > 1) {
-        childDevices.each {
-            log.debug "$it"
-            def childEndpoint = getChildEndpoint(it.deviceNetworkId)
-            if (childEndpoint.isNumber()) {
-                log.debug "refresh $childEndpoint"
-                def endpointInt = zigbee.convertHexToInt(childEndpoint)
-                cmds += zigbee.readAttribute(zigbee.ONOFF_CLUSTER, 0x0000, [destEndpoint: endpointInt])
-            }
-        }
-    } else {
-        cmds += zigbee.readAttribute(zigbee.ONOFF_CLUSTER, 0x0000, [destEndpoint: 0xFF])
-    }
-
+    def cmds = []
+    cmds += zigbee.onOffRefresh()
+    cmds += zigbee.readAttribute(zigbee.ONOFF_CLUSTER, 0x0000, [destEndpoint: 0xFF])
     return cmds
 }
 
@@ -342,21 +330,9 @@ def configure() {
     configureHealthCheck()
 
     //other devices supported by this DTH in the future
-    def cmds = zigbee.onOffConfig(0, 120)
-    def endpointCount = getEndpointCount()
-
-    if (endpointCount > 1) {
-        childDevices.each {
-            def childEndpoint = getChildEndpoint(it.deviceNetworkId)
-            if (childEndpoint.isNumber()) {
-                log.debug "configure(): $childEndpoint"
-                def endpointInt = zigbee.convertHexToInt(childEndpoint)
-                cmds += zigbee.configureReporting(zigbee.ONOFF_CLUSTER, 0x0000, 0x10, 0, 120, null, [destEndpoint: endpointInt])
-            }
-        }
-    } else {
-        cmds += zigbee.configureReporting(zigbee.ONOFF_CLUSTER, 0x0000, 0x10, 0, 120, null, [destEndpoint: 0xFF])
-    }
+    def cmds = []
+    cmds += zigbee.onOffConfig(0, 120)
+    cmds += zigbee.configureReporting(zigbee.ONOFF_CLUSTER, 0x0000, 0x10, 0, 120, null, [destEndpoint: 0xFF])
     cmds += refresh()
     return cmds
 }
