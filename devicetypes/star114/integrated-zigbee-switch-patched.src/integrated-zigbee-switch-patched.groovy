@@ -242,17 +242,17 @@ def parse(String description) {
 
     if (eventMap) {
         def endpointId = device.getDataValue("endpointId")
-        // log.debug "eventMap $eventMap | eventDescMap $eventDescMap"
+        log.debug "eventMap $eventMap | eventDescMap $eventDescMap"
         eventMap[displayed] = true
         if (eventDescMap?.sourceEndpoint == endpointId) {
-            // log.debug "parse - sendEvent parent $eventDescMap.sourceEndpoint"
+            log.debug "parse - sendEvent parent $eventDescMap.sourceEndpoint"
             sendEvent(eventMap)
         } else {
             def childDevice = childDevices.find {
                 it.deviceNetworkId == "$device.deviceNetworkId:${eventDescMap.sourceEndpoint}"
             }
             if (childDevice) {
-                // log.debug "parse - sendEvent child  $eventDescMap.sourceEndpoint"
+                log.debug "parse - sendEvent child  $eventDescMap.sourceEndpoint"
                 childDevice.sendEvent(eventMap)
             } else if (isAutoCreateChildDevice != false || getEndpointCount() == 0){
                 def model = device.getDataValue("model")
@@ -295,7 +295,7 @@ def parse(String description) {
 
 private checkAllSwtichValue() {
     def parentSwitchValue = device.currentState("switch").value
-    // log.debug("checkAllSwtichValue ${device.label} : ${parentSwitchValue}")
+    log.debug("checkAllSwtichValue ${device.label} : ${parentSwitchValue}")
 
     def allChildDeviceValue = parentSwitchValue
 
@@ -319,7 +319,7 @@ private getEndpointCount() {
     def model = device.getDataValue("model")
     def count = MODEL_MAP[model] ?: 0
 
-    // log.debug("getEndpointCount[$model] : $count")
+    log.debug("getEndpointCount[$model] : $count")
     return count
 }
 
