@@ -23,7 +23,7 @@ For [Hejhome smart temperature-humidity sensor](https://www.hej.life/shop/?idx=2
 
 ### zigbee-metering-plug-patched
 
-For [Dawon DNS ZB smart plug 16A (end device)](https://pmshop.co.kr/product/detail.html?product_no=111&cate_no=33&display_group=1)
+For [Dawon DNS ZB smart plug 16A (end device)](https://pmshop.co.kr/product/detail.html?product_no=111&cate_no=33&display_group=1) and Dawon DNS ZB smart plug 16A (new device - router)
 * Can connect to Smartthings hub directly. (Cloud execution) - Official zigbee-switch-power DTH will support Dawon DNS ZB smart plug (local execution) soon.
 * Forked from [SmartThingsPublic repo](https://github.com/star114/SmartThingsPublic/blob/master/devicetypes/smartthings/zigbee-metering-plug.src/zigbee-metering-plug.groovy)
 * Compatible with Dawon smart plugs footprints
